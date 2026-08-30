@@ -10,6 +10,7 @@
 
   <h1>Tablero de Proyectos</h1>
 
+  <!-- Controles para agregar nuevas tareas -->
   <div class="form-container">
     <input type="text" id="taskInput" placeholder="Nombre de la tarea...">
     <select id="prioritySelect">
@@ -20,6 +21,18 @@
     <button onclick="agregarTarea()">Agregar Tarea</button>
   </div>
 
+  <!-- Controles para filtrar tareas por prioridad -->
+  <div class="form-container" style="margin-top: -10px; border-bottom: 2px solid #ddd; padding-bottom: 20px;">
+    <label for="filterPriority" style="font-weight: bold; margin-top: 8px;">Ver tareas:</label>
+    <select id="filterPriority" onchange="aplicarFiltro()">
+      <option value="todas">Todas las prioridades</option>
+      <option value="alta">🔴 Solo Alta Prioridad</option>
+      <option value="media">🟡 Solo Media Prioridad</option>
+      <option value="baja">🟢 Solo Baja Prioridad</option>
+    </select>
+  </div>
+
+  <!-- Tablero Kanban con las columnas de las fases -->
   <div class="kanban-board">
     <div class="column" id="backlog" ondrop="drop(event)" ondragover="allowDrop(event)">
       <h2>Backlog / Por Iniciar</h2>
@@ -47,8 +60,11 @@
     </div>
   </div>
 
+  <!-- SDKs de Firebase -->
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+  
+  <!-- Tu archivo de lógica de JavaScript -->
   <script src="script.js"></script>
 </body>
 </html>
