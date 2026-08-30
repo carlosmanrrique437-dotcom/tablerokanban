@@ -78,6 +78,15 @@ button {
 .card.baja { border-left-color: #2ecc71; }
 
 /* Ajustes para el texto y los botones de Editar/Eliminar */
+/* Nuevos estilos para acomodar título a la izquierda y botones a la derecha */
+.card {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+}
+
+/* Ajustes para el texto y los botones de Editar/Eliminar */
 .card-title {
   flex-grow: 1;
   word-break: break-word;
