@@ -17,6 +17,8 @@ const refTareas = db.ref('tareas');
 
 let tareasActuales = {}; // Aquí guardamos las tareas para filtrarlas rápido
 
+let tareasActuales = {}; // Aquí guardamos las tareas para filtrarlas rápido
+
 // Escuchar cambios en TIEMPO REAL desde la base de datos
 refTareas.on('value', (snapshot) => {
   tareasActuales = snapshot.val() || {};
