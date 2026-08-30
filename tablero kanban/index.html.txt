@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tablero Kanban Interactivo</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+  <h1>Tablero de Proyectos</h1>
+
+  <div class="form-container">
+    <input type="text" id="taskInput" placeholder="Nombre de la tarea...">
+    <select id="prioritySelect">
+      <option value="alta">Alta</option>
+      <option value="media">Media</option>
+      <option value="baja">Baja</option>
+    </select>
+    <button onclick="agregarTarea()">Agregar Tarea</button>
+  </div>
+
+  <div class="kanban-board">
+    <div class="column" id="backlog" ondrop="drop(event)" ondragover="allowDrop(event)">
+      <h2>Backlog / Por Iniciar</h2>
+      <div class="cards-container"></div>
+    </div>
+
+    <div class="column" id="planeacion" ondrop="drop(event)" ondragover="allowDrop(event)">
+      <h2>Planeación</h2>
+      <div class="cards-container"></div>
+    </div>
+
+    <div class="column" id="ejecucion" ondrop="drop(event)" ondragover="allowDrop(event)">
+      <h2>En Ejecución</h2>
+      <div class="cards-container"></div>
+    </div>
+
+    <div class="column" id="validacion" ondrop="drop(event)" ondragover="allowDrop(event)">
+      <h2>Validación / Pruebas</h2>
+      <div class="cards-container"></div>
+    </div>
+
+    <div class="column" id="cierre" ondrop="drop(event)" ondragover="allowDrop(event)">
+      <h2>Cierre / Finalizado</h2>
+      <div class="cards-container"></div>
+    </div>
+  </div>
+
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+  <script src="script.js"></script>
+</body>
+</html>
