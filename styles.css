@@ -65,8 +65,41 @@ button {
   box-shadow: 0 1px 3px rgba(0,0,0,0.2);
   cursor: grab;
   border-left: 5px solid #ccc;
+  
+  /* Nuevos estilos para acomodar título a la izquierda y botones a la derecha */
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
 }
 
 .card.alta { border-left-color: #e74c3c; }
 .card.media { border-left-color: #f1c40f; }
 .card.baja { border-left-color: #2ecc71; }
+
+/* Ajustes para el texto y los botones de Editar/Eliminar */
+.card-title {
+  flex-grow: 1;
+  word-break: break-word;
+}
+
+.card-actions {
+  display: flex;
+  gap: 5px;
+}
+
+.card-actions button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 14px;
+  padding: 2px 4px;
+  opacity: 0.6;
+  color: #333;
+}
+
+.card-actions button:hover {
+  opacity: 1;
+  background-color: #f0f0f0;
+  border-radius: 4px;
+}
