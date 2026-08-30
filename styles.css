@@ -66,7 +66,7 @@ button {
   cursor: grab;
   border-left: 5px solid #ccc;
   
-  /* Nuevos estilos para acomodar título a la izquierda y botones a la derecha */
+  /* Flexbox para separar el texto a la izquierda y los botones a la derecha */
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -77,26 +77,19 @@ button {
 .card.media { border-left-color: #f1c40f; }
 .card.baja { border-left-color: #2ecc71; }
 
-/* Ajustes para el texto y los botones de Editar/Eliminar */
-/* Nuevos estilos para acomodar título a la izquierda y botones a la derecha */
-.card {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 10px;
-}
-
-/* Ajustes para el texto y los botones de Editar/Eliminar */
+/* El texto de la tarea ocupa el espacio restante */
 .card-title {
   flex-grow: 1;
   word-break: break-word;
 }
 
+/* Contenedor de los botones de editar y borrar */
 .card-actions {
   display: flex;
   gap: 5px;
 }
 
+/* Diseño invisible de los botones hasta que pases el mouse */
 .card-actions button {
   background: none;
   border: none;
