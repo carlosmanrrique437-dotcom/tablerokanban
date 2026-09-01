@@ -5,9 +5,14 @@ body {
   padding: 20px;
 }
 
-h1 {
+.header-logo {
   text-align: center;
-  color: #333;
+  margin-bottom: 20px;
+}
+
+.header-logo img {
+  max-height: 80px;
+  object-fit: contain;
 }
 
 .form-container {
@@ -16,19 +21,26 @@ h1 {
   flex-wrap: wrap;
   gap: 10px;
   margin-bottom: 20px;
+  align-items: center;
 }
 
 input, select, button {
   padding: 10px;
   font-size: 14px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
 }
 
 button {
-  background-color: #007bff;
+  background-color: #0b2240; /* Azul oscuro corporativo Vardí */
   color: white;
   border: none;
   cursor: pointer;
-  border-radius: 4px;
+  font-weight: bold;
+}
+
+button:hover {
+  background-color: #f29e16; /* Naranja corporativo Vardí */
 }
 
 .kanban-board {
@@ -52,6 +64,7 @@ button {
   color: #172b4d;
   border-bottom: 2px solid #ccc;
   padding-bottom: 8px;
+  text-transform: uppercase;
 }
 
 .cards-container {
@@ -70,19 +83,12 @@ button {
   flex-direction: column;
 }
 
-/* Efecto cuando la estás arrastrando */
-.card.dragging {
-  opacity: 0.5;
-  border: 2px dashed #007bff;
-}
-
 /* Colores de prioridades y estados */
 .card.alta { border-left-color: #e74c3c; }
 .card.media { border-left-color: #f1c40f; }
 .card.baja { border-left-color: #2ecc71; }
-.card.detenido { border-left-color: #95a5a6; } /* Gris para detenido */
+.card.detenido { border-left-color: #95a5a6; opacity: 0.8; }
 
-/* Etiqueta del proyecto */
 .project-badge {
   align-self: flex-start;
   padding: 3px 8px;
@@ -95,6 +101,12 @@ button {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+}
+
+.order-badge {
+  font-size: 10px;
+  color: #888;
+  margin-bottom: 5px;
 }
 
 .card-content {
@@ -120,12 +132,61 @@ button {
   border: none;
   cursor: pointer;
   font-size: 14px;
-  padding: 2px 4px;
-  opacity: 0.6;
+  padding: 4px;
+  color: #333;
 }
 
 .card-actions button:hover {
-  opacity: 1;
-  background-color: #f0f0f0;
-  border-radius: 4px;
+  background-color: #e0e0e0;
+}
+
+/* DISEÑO DE LA VENTANA EMERGENTE (MODAL) */
+.modal {
+  display: none;
+  position: fixed;
+  z-index: 1000;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0,0,0,0.5);
+}
+
+.modal-content {
+  background-color: #fefefe;
+  margin: 10% auto;
+  padding: 20px;
+  border: 1px solid #888;
+  width: 350px;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+}
+
+.close {
+  color: #aaa;
+  float: right;
+  font-size: 28px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.close:hover {
+  color: black;
+}
+
+.modal-field {
+  margin-bottom: 15px;
+}
+
+.modal-field label {
+  display: block;
+  font-weight: bold;
+  margin-bottom: 5px;
+  font-size: 13px;
+}
+
+.btn-guardar {
+  width: 100%;
+  padding: 12px;
+  margin-top: 10px;
 }
