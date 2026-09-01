@@ -14,10 +14,10 @@ const firebaseConfig = {
 firebase.initializeApp(firebaseConfig);
 const db = firebase.database();
 const refTareas = db.ref('tareas');
-const refProyectos = db.ref('proyectos'); // Nueva carpeta en BD para guardar los proyectos para siempre
+const refProyectos = db.ref('proyectos'); 
 
 let tareasActuales = {}; 
-let proyectosGlobales = []; // Proyectos guardados en Firebase
+let proyectosGlobales = []; 
 
 // Escuchar cambios en los proyectos
 refProyectos.on('value', (snapshot) => {
@@ -32,16 +32,14 @@ refTareas.on('value', (snapshot) => {
   renderizarTablero();
 });
 
-// Actualizar todos los menús desplegables de proyectos
 function actualizarListasProyectos() {
   const selectCrear = document.getElementById('projectSelect');
   const selectFiltro = document.getElementById('filterProject');
-  const selectEditar = document.getElementById('editTaskProject'); // El de la ventana emergente
+  const selectEditar = document.getElementById('editTaskProject'); 
   
   const valorActualCrear = selectCrear.value;
   const valorActualFiltro = selectFiltro.value;
 
-  // Unir proyectos guardados en BD con los que ya existían en tareas viejas
   const proyectosUnicos = new Set(proyectosGlobales);
   Object.values(tareasActuales).forEach(t => {
     if(t.proyecto && t.proyecto !== 'General' && t.proyecto.trim() !== "") proyectosUnicos.add(t.proyecto);
@@ -79,7 +77,6 @@ function verificarNuevoProyecto() {
   }
 }
 
-// LOGICA PRINCIPAL DEL BOTON GUARDAR
 function agregarAlTablero() {
   const inputTarea = document.getElementById('taskInput');
   const selectProj = document.getElementById('projectSelect');
@@ -89,18 +86,15 @@ function agregarAlTablero() {
   const textoTarea = inputTarea.value.trim();
   let proyecto = selectProj.value;
 
-  // Si escogió crear proyecto nuevo
   if (proyecto === 'NUEVO') {
     proyecto = inputNuevoProj.value.trim();
     if (proyecto !== '') {
-      // Guardar permanentemente en la base de datos de Proyectos
       db.ref(`proyectos/${proyecto}`).set(true); 
     }
   }
 
   if (proyecto === '') proyecto = 'General';
 
-  // Si dejó la tarea vacía pero escribió un proyecto, significa que SOLO quería crear el proyecto
   if (textoTarea === '') {
     if (proyecto !== 'General') {
       alert(`¡Proyecto "${proyecto}" creado exitosamente! Ya está disponible en las listas.`);
@@ -110,29 +104,26 @@ function agregarAlTablero() {
     } else {
       alert("Por favor escribe el nombre de la tarea o crea un proyecto nuevo.");
     }
-    return; // Terminamos aquí, no se crea tarea en blanco
+    return;
   }
 
-  // Si hay tarea, se crea
   db.ref('tareas').push({
     titulo: textoTarea,
     proyecto: proyecto,
     prioridad: prioridad,
     columna: 'backlog',
-    orden: Date.now() // Va de último por defecto
+    orden: Date.now() 
   });
 
   inputTarea.value = '';
 }
 
-// Dibujar el tablero
 function renderizarTablero() {
   document.querySelectorAll('.cards-container').forEach(c => c.innerHTML = '');
   
   const filtroPrioridad = document.getElementById('filterPriority').value;
   const filtroProyecto = document.getElementById('filterProject').value;
 
-  // Ordenar por el número de posición
   const arrayTareas = Object.keys(tareasActuales).map(id => ({
     id,
     ...tareasActuales[id]
@@ -212,7 +203,6 @@ function abrirModalEdicion(id) {
   document.getElementById('editTaskId').value = id;
   document.getElementById('editTaskTitle').value = tarea.titulo;
   
-  // Seleccionar el proyecto en el modal
   const selectProyectoModal = document.getElementById('editTaskProject');
   if(selectProyectoModal.querySelector(`option[value="${tarea.proyecto}"]`)) {
     selectProyectoModal.value = tarea.proyecto || 'General';
