@@ -7,7 +7,7 @@ body {
 
 h1 {
   text-align: center;
-  color: #0b2240;
+  color: #22407A; /* Azul oscuro */
   margin-top: 5px;
   margin-bottom: 15px;
 }
@@ -21,6 +21,14 @@ h1 {
   align-items: center;
 }
 
+/* El bloque superior azul (#22407A) */
+.top-bar {
+  background-color: #22407A;
+  padding: 15px;
+  border-radius: 8px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+}
+
 input, select, button {
   padding: 8px 10px;
   font-size: 13px;
@@ -28,9 +36,10 @@ input, select, button {
   border-radius: 4px;
 }
 
+/* Botones color Amarillo (#FFC107) */
 button {
-  background-color: #0b2240; 
-  color: white;
+  background-color: #FFC107; 
+  color: #22407A; /* Texto azul para contraste */
   border: none;
   cursor: pointer;
   font-weight: bold;
@@ -38,10 +47,10 @@ button {
 }
 
 button:hover {
-  background-color: #f29e16; 
+  background-color: #e0a800; 
 }
 
-/* Scrollbar superior (Sincronizado) */
+/* Scrollbar superior */
 #topScrollWrapper {
   overflow-x: auto;
   overflow-y: hidden;
@@ -49,10 +58,10 @@ button:hover {
   border-radius: 4px;
 }
 #topScrollContent {
-  height: 1px; /* Invisible pero da el ancho necesario */
+  height: 1px; 
 }
 
-/* Tablero */
+/* Tablero y Columnas */
 .kanban-board {
   display: flex;
   gap: 12px;
@@ -65,27 +74,31 @@ button:hover {
   border-radius: 6px;
   width: 260px;
   min-width: 260px;
-  padding: 10px;
+  /* El padding superior es 0 para que el gris del título toque el borde */
+  padding: 0 10px 10px 10px; 
   display: flex;
   flex-direction: column;
+  overflow: hidden; 
 }
 
+/* Encabezados Grisesitos (#F2F2F2) y texto Azul (#22407A) */
 .column h2 {
   font-size: 14px;
-  color: #172b4d;
-  border-bottom: 2px solid #ccc;
-  padding-bottom: 8px;
-  margin-top: 0;
-  margin-bottom: 10px;
+  background-color: #F2F2F2;
+  color: #22407A;
+  margin: 0 -10px 10px -10px; 
+  padding: 12px 10px;
+  border-bottom: 1px solid #dcdcdc;
   text-transform: uppercase;
   text-align: center;
 }
 
 .cards-container {
   min-height: 150px;
-  flex-grow: 1; /* Hace que el área para soltar tareas llene la columna */
+  flex-grow: 1; 
 }
 
+/* Tarjetas */
 .card {
   background: white;
   padding: 10px;
@@ -124,17 +137,31 @@ button:hover {
   font-weight: bold;
 }
 
+/* Diseño del Responsable */
+.responsable-badge {
+  font-size: 11px;
+  color: #555;
+  margin-top: 6px;
+  display: flex;
+  align-items: center;
+  font-style: italic;
+}
+
 .card-content {
   display: flex;
   justify-content: space-between;
-  align-items: center;
+  align-items: flex-start;
   gap: 8px;
 }
 
-.card-title {
+.card-main-info {
   flex-grow: 1;
+}
+
+.card-title {
   word-break: break-word;
   font-size: 13px;
+  font-weight: bold;
 }
 
 .card-actions {
@@ -187,5 +214,5 @@ button:hover {
 
 .close:hover { color: black; }
 .modal-field { margin-bottom: 15px; }
-.modal-field label { display: block; font-weight: bold; margin-bottom: 5px; font-size: 12px; }
+.modal-field label { display: block; font-weight: bold; margin-bottom: 5px; font-size: 12px; color: #22407A; }
 .btn-guardar { width: 100%; padding: 12px; margin-top: 10px; }
