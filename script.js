@@ -19,7 +19,6 @@ const refProyectos = db.ref('proyectos');
 let tareasActuales = {}; 
 let proyectosGlobales = []; 
 
-// Escuchar cambios
 refProyectos.on('value', (snapshot) => {
   proyectosGlobales = snapshot.val() ? Object.keys(snapshot.val()) : [];
   actualizarListasProyectos();
@@ -31,7 +30,6 @@ refTareas.on('value', (snapshot) => {
   renderizarTablero();
 });
 
-// Sincronizar las barras de scroll (Superior e Inferior)
 function syncScroll(source) {
   const top = document.getElementById('topScrollWrapper');
   const bottom = document.getElementById('kanbanBoard');
@@ -75,10 +73,9 @@ function actualizarListasProyectos() {
   if (valorActualCrear !== "NUEVO" && valorActualCrear !== "") selectCrear.value = valorActualCrear;
   selectFiltro.value = valorActualFiltro;
   
-  aplicarFiltro(); // Actualizar visibilidad del botón eliminar proyecto
+  aplicarFiltro(); 
 }
 
-// Controla qué texto y campos se ven según lo que quieres hacer
 function actualizarBoton() {
   const select = document.getElementById('projectSelect');
   const inputNuevo = document.getElementById('newProjectInput');
@@ -92,12 +89,11 @@ function actualizarBoton() {
     inputNuevo.value = '';
   }
 
+  // Cambio de texto del botón amarillo
   if (select.value === 'NUEVO' && inputTarea === '') {
-    btn.innerText = 'Agregar Proyecto';
-    btn.style.backgroundColor = '#28a745'; // Verde
+    btn.innerText = 'Guardar Proyecto';
   } else {
     btn.innerText = 'Agregar Tarea';
-    btn.style.backgroundColor = '#0b2240'; // Azul
   }
 }
 
@@ -134,7 +130,6 @@ function agregarAlTablero() {
     return;
   }
 
-  // Generar un número de orden limpio (1, 2, 3...)
   let maxOrden = 0;
   Object.values(tareasActuales).forEach(t => {
     if (t.columna === 'backlog' && t.orden && t.orden < 1000000) {
@@ -147,7 +142,8 @@ function agregarAlTablero() {
     proyecto: proyecto,
     prioridad: prioridad,
     columna: 'backlog',
-    orden: maxOrden + 1
+    orden: maxOrden + 1,
+    responsable: "" // Se crea vacío por defecto
   }).then(() => {
     inputTarea.value = '';
     actualizarBoton();
@@ -174,14 +170,13 @@ function renderizarTablero() {
     if (pasaPrioridad && pasaProyecto) renderizarTarjeta(tarea.id, tarea);
   });
   
-  setTimeout(updateTopScrollWidth, 100); // Ajusta el scroll de arriba
+  setTimeout(updateTopScrollWidth, 100); 
 }
 
 function aplicarFiltro() {
   const filtroProyecto = document.getElementById('filterProject').value;
   const btnEliminarProyecto = document.getElementById('btnEliminarProyecto');
   
-  // Mostrar botón de eliminar solo si hay un proyecto específico seleccionado
   if (filtroProyecto !== 'todos' && filtroProyecto !== 'General') {
     btnEliminarProyecto.style.display = 'inline-block';
   } else {
@@ -198,7 +193,7 @@ function eliminarProyectoSeleccionado() {
   if(confirm(`¿Estás seguro de eliminar el proyecto "${proyecto}"?\nLas tareas asociadas no se borrarán, pero quedarán sin proyecto.`)) {
     db.ref(`proyectos/${proyecto}`).remove();
     alert(`Proyecto ${proyecto} eliminado.`);
-    document.getElementById('filterProject').value = 'todos'; // Resetear filtro
+    document.getElementById('filterProject').value = 'todos'; 
     aplicarFiltro();
   }
 }
@@ -229,16 +224,27 @@ function renderizarTarjeta(id, tarea) {
 
   const ordenTexto = document.createElement('div');
   ordenTexto.className = 'order-badge';
-  // Ocultamos el número gigante si es un registro viejo
   const numMostrar = (tarea.orden && tarea.orden < 1000000) ? tarea.orden : '-';
   ordenTexto.innerText = `Posición: ${numMostrar}`;
 
   const content = document.createElement('div');
   content.className = 'card-content';
 
-  const titulo = document.createElement('span');
+  // Contenedor principal de los textos de la tarjeta
+  const mainInfo = document.createElement('div');
+  mainInfo.className = 'card-main-info';
+
+  const titulo = document.createElement('div');
   titulo.className = 'card-title';
   titulo.innerText = tarea.titulo;
+
+  // Texto del Responsable (Se muestra si existe)
+  const responsable = document.createElement('div');
+  responsable.className = 'responsable-badge';
+  responsable.innerHTML = tarea.responsable ? `👤 ${tarea.responsable}` : '👤 Sin asignar';
+
+  mainInfo.appendChild(titulo);
+  mainInfo.appendChild(responsable);
 
   const acciones = document.createElement('div');
   acciones.className = 'card-actions';
@@ -253,7 +259,8 @@ function renderizarTarjeta(id, tarea) {
 
   acciones.appendChild(btnEditar);
   acciones.appendChild(btnEliminar);
-  content.appendChild(titulo);
+  
+  content.appendChild(mainInfo);
   content.appendChild(acciones);
 
   card.appendChild(badge);
@@ -276,7 +283,9 @@ function abrirModalEdicion(id) {
 
   document.getElementById('editTaskPriority').value = tarea.prioridad;
   
-  // Limpiamos el número gigante en el modal para que le ponga uno nuevo
+  // Cargar responsable actual en la ventana de edición
+  document.getElementById('editTaskResponsable').value = tarea.responsable || '';
+  
   const numFormulario = (tarea.orden && tarea.orden < 1000000) ? tarea.orden : '';
   document.getElementById('editTaskOrder').value = numFormulario;
 
@@ -290,14 +299,17 @@ function guardarEdicion() {
   const nuevoTitulo = document.getElementById('editTaskTitle').value.trim();
   const nuevoProyecto = document.getElementById('editTaskProject').value;
   const nuevaPrioridad = document.getElementById('editTaskPriority').value;
+  const nuevoResponsable = document.getElementById('editTaskResponsable').value.trim();
   const nuevoOrden = parseInt(document.getElementById('editTaskOrder').value);
 
   if (nuevoTitulo === '') { alert("El título no puede estar vacío"); return; }
 
+  // Se envía a Firebase el responsable junto con los demás datos
   db.ref(`tareas/${id}`).update({ 
     titulo: nuevoTitulo,
     proyecto: nuevoProyecto,
     prioridad: nuevaPrioridad,
+    responsable: nuevoResponsable,
     orden: isNaN(nuevoOrden) ? 999999 : nuevoOrden
   });
 
