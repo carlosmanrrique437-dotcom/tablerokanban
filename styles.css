@@ -5,14 +5,10 @@ body {
   padding: 20px;
 }
 
-.header-logo {
+h1 {
   text-align: center;
-  margin-bottom: 20px;
-}
-
-.header-logo img {
-  max-height: 80px;
-  object-fit: contain;
+  color: #0b2240;
+  margin-bottom: 25px;
 }
 
 .form-container {
