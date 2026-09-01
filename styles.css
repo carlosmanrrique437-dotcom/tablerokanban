@@ -13,6 +13,7 @@ h1 {
 .form-container {
   display: flex;
   justify-content: center;
+  flex-wrap: wrap;
   gap: 10px;
   margin-bottom: 20px;
 }
@@ -41,9 +42,9 @@ button {
   background-color: #ebecf0;
   border-radius: 6px;
   width: 250px;
-  min-width: 220px;
+  min-width: 250px;
   padding: 10px;
-  min-height: 400px;
+  min-height: 500px;
 }
 
 .column h2 {
@@ -54,7 +55,7 @@ button {
 }
 
 .cards-container {
-  min-height: 350px;
+  min-height: 450px;
 }
 
 .card {
@@ -65,31 +66,55 @@ button {
   box-shadow: 0 1px 3px rgba(0,0,0,0.2);
   cursor: grab;
   border-left: 5px solid #ccc;
-  
-  /* Flexbox para separar el texto a la izquierda y los botones a la derecha */
+  display: flex;
+  flex-direction: column;
+}
+
+/* Efecto cuando la estás arrastrando */
+.card.dragging {
+  opacity: 0.5;
+  border: 2px dashed #007bff;
+}
+
+/* Colores de prioridades y estados */
+.card.alta { border-left-color: #e74c3c; }
+.card.media { border-left-color: #f1c40f; }
+.card.baja { border-left-color: #2ecc71; }
+.card.detenido { border-left-color: #95a5a6; } /* Gris para detenido */
+
+/* Etiqueta del proyecto */
+.project-badge {
+  align-self: flex-start;
+  padding: 3px 8px;
+  border-radius: 12px;
+  font-size: 11px;
+  color: white;
+  font-weight: bold;
+  margin-bottom: 8px;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.card-content {
   display: flex;
   justify-content: space-between;
   align-items: center;
   gap: 10px;
 }
 
-.card.alta { border-left-color: #e74c3c; }
-.card.media { border-left-color: #f1c40f; }
-.card.baja { border-left-color: #2ecc71; }
-
-/* El texto de la tarea ocupa el espacio restante */
 .card-title {
   flex-grow: 1;
   word-break: break-word;
+  font-size: 14px;
 }
 
-/* Contenedor de los botones de editar y borrar */
 .card-actions {
   display: flex;
   gap: 5px;
 }
 
-/* Diseño invisible de los botones hasta que pases el mouse */
 .card-actions button {
   background: none;
   border: none;
@@ -97,7 +122,6 @@ button {
   font-size: 14px;
   padding: 2px 4px;
   opacity: 0.6;
-  color: #333;
 }
 
 .card-actions button:hover {
