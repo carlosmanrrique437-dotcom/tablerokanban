@@ -32,7 +32,7 @@ input, select, button {
 }
 
 button {
-  background-color: #0b2240; /* Azul oscuro corporativo Vardí */
+  background-color: #0b2240; 
   color: white;
   border: none;
   cursor: pointer;
@@ -40,7 +40,7 @@ button {
 }
 
 button:hover {
-  background-color: #f29e16; /* Naranja corporativo Vardí */
+  background-color: #f29e16; 
 }
 
 .kanban-board {
@@ -83,7 +83,6 @@ button:hover {
   flex-direction: column;
 }
 
-/* Colores de prioridades y estados */
 .card.alta { border-left-color: #e74c3c; }
 .card.media { border-left-color: #f1c40f; }
 .card.baja { border-left-color: #2ecc71; }
