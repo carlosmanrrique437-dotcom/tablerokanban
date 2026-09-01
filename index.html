@@ -5,7 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Tablero PMO - Vardí</title>
   
-  <!-- Ícono de la pestaña del navegador (Favicon) -->
   <link rel="icon" type="image/jpeg" href="Gemini_Generated_Image_iqgt0riqgt0riqgt.jpg">
   <link rel="stylesheet" href="styles.css">
 </head>
@@ -21,12 +20,12 @@
     
     <select id="projectSelect" onchange="verificarNuevoProyecto()">
       <option value="">-- Seleccionar Proyecto --</option>
-      <option value="NUEVO">+ Crear Nuevo Proyecto</option>
+      <option value="NUEVO">+ Crear Nuevo Proyecto...</option>
     </select>
     
-    <input type="text" id="newProjectInput" placeholder="Nombre del nuevo proyecto..." style="display:none;">
+    <input type="text" id="newProjectInput" placeholder="Escribe el nuevo proyecto..." style="display:none;">
     
-    <input type="text" id="taskInput" placeholder="Nombre de la tarea...">
+    <input type="text" id="taskInput" placeholder="Nombre de la tarea (Opcional si solo creas proyecto)...">
     
     <select id="prioritySelect">
       <option value="alta">Alta</option>
@@ -35,7 +34,7 @@
       <option value="detenido">⚪ Detenido</option>
     </select>
     
-    <button onclick="agregarTarea()">Agregar Tarea</button>
+    <button onclick="agregarAlTablero()">Guardar</button>
   </div>
 
   <!-- Controles para FILTRAR la vista -->
@@ -98,7 +97,7 @@
       
       <div class="modal-field">
         <label>Proyecto:</label>
-        <input type="text" id="editTaskProject" style="width: 90%;">
+        <select id="editTaskProject" style="width: 95%;"></select>
       </div>
 
       <div class="modal-field">
@@ -113,7 +112,7 @@
 
       <div class="modal-field">
         <label>Posición (Número de Orden):</label>
-        <p style="font-size: 11px; color: #666; margin: 0 0 5px 0;">(Usa 1 para ponerla de primeras, 2 de segundas, etc.)</p>
+        <p style="font-size: 11px; color: #666; margin: 0 0 5px 0;">(Usa 1 para ponerla de primeras, 2 de segundas, etc. en la columna)</p>
         <input type="number" id="editTaskOrder" style="width: 90%;">
       </div>
 
