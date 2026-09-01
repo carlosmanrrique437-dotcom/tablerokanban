@@ -5,9 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Tablero PMO - Vardí</title>
   
-  <!-- Ícono EXCLUSIVO para la pestaña del navegador (Truco ?v=2 para forzar recarga) -->
-  <link rel="icon" type="image/jpeg" href="Gemini_Generated_Image_iqgt0riqgt0riqgt.jpg?v=2">
-  
+  <link rel="icon" type="image/jpeg" href="Gemini_Generated_Image_iqgt0riqgt0riqgt.jpg?v=3">
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
@@ -15,7 +13,7 @@
   <h1>Tablero PMO - Vardí</h1>
 
   <!-- Controles para crear tareas y seleccionar proyectos -->
-  <div class="form-container">
+  <div class="form-container" style="background-color: #fff; padding: 15px; border-radius: 8px; box-shadow: 0 1px 4px rgba(0,0,0,0.1);">
     
     <select id="projectSelect" onchange="actualizarBoton()">
       <option value="">-- Seleccionar Proyecto --</option>
@@ -37,11 +35,14 @@
   </div>
 
   <!-- Controles para FILTRAR la vista -->
-  <div class="form-container" style="margin-top: -10px; border-bottom: 2px solid #ddd; padding-bottom: 20px;">
+  <div class="form-container" style="border-bottom: 2px solid #ddd; padding-bottom: 15px;">
     <label for="filterProject" style="font-weight: bold; margin-top: 8px;">Filtrar Proyecto:</label>
     <select id="filterProject" onchange="aplicarFiltro()">
       <option value="todos">Todos los proyectos</option>
     </select>
+
+    <!-- Botón para eliminar el proyecto que esté filtrado -->
+    <button id="btnEliminarProyecto" onclick="eliminarProyectoSeleccionado()" style="display: none; background-color: #dc3545; padding: 8px 12px; margin-left: 5px;">🗑️ Eliminar Proyecto</button>
 
     <label for="filterPriority" style="font-weight: bold; margin-top: 8px; margin-left: 15px;">Prioridad:</label>
     <select id="filterPriority" onchange="aplicarFiltro()">
@@ -53,8 +54,13 @@
     </select>
   </div>
 
+  <!-- BARRA DE SCROLL SUPERIOR -->
+  <div id="topScrollWrapper" onscroll="syncScroll('top')">
+    <div id="topScrollContent"></div>
+  </div>
+
   <!-- Tablero Kanban -->
-  <div class="kanban-board">
+  <div class="kanban-board" id="kanbanBoard" onscroll="syncScroll('bottom')">
     <div class="column" id="backlog" ondrop="drop(event)" ondragover="allowDrop(event)">
       <h2>Backlog / Por Iniciar</h2>
       <div class="cards-container"></div>
@@ -86,7 +92,6 @@
     <div class="modal-content">
       <span class="close" onclick="cerrarModal()">&times;</span>
       <h3>Editar Tarea</h3>
-      
       <input type="hidden" id="editTaskId">
       
       <div class="modal-field">
