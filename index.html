@@ -10,30 +10,41 @@
 
   <h1>Tablero de Proyectos</h1>
 
-  <!-- Controles para agregar nuevas tareas -->
+  <!-- Controles para crear tareas y proyectos -->
   <div class="form-container">
+    <input type="text" id="projectInput" placeholder="Proyecto (ej. Fidelis)" list="listaProyectos">
+    <datalist id="listaProyectos"></datalist> <!-- Autocompletará proyectos existentes -->
+    
     <input type="text" id="taskInput" placeholder="Nombre de la tarea...">
+    
     <select id="prioritySelect">
       <option value="alta">Alta</option>
       <option value="media">Media</option>
       <option value="baja">Baja</option>
+      <option value="detenido">⚪ Detenido</option>
     </select>
+    
     <button onclick="agregarTarea()">Agregar Tarea</button>
   </div>
 
-  <!-- Controles para filtrar la vista (ocultar tareas según prioridad) -->
+  <!-- Controles para FILTRAR la vista -->
   <div class="form-container" style="margin-top: -10px; border-bottom: 2px solid #ddd; padding-bottom: 20px;">
-    <label for="filterPriority" style="font-weight: bold; margin-top: 8px;">Ver tareas:</label>
+    <label for="filterProject" style="font-weight: bold; margin-top: 8px;">Filtrar Proyecto:</label>
+    <select id="filterProject" onchange="aplicarFiltro()">
+      <option value="todos">Todos los proyectos</option>
+    </select>
+
+    <label for="filterPriority" style="font-weight: bold; margin-top: 8px; margin-left: 15px;">Prioridad:</label>
     <select id="filterPriority" onchange="aplicarFiltro()">
-      <option value="todas">Todas las prioridades</option>
-      <option value="alta">🔴 Solo Alta Prioridad</option>
-      <option value="media">🟡 Solo Media Prioridad</option>
-      <option value="baja">🟢 Solo Baja Prioridad</option>
-      <option value="baja">⚪ Detenido</option>
+      <option value="todas">Todas</option>
+      <option value="alta">🔴 Alta</option>
+      <option value="media">🟡 Media</option>
+      <option value="baja">🟢 Baja</option>
+      <option value="detenido">⚪ Detenido</option>
     </select>
   </div>
 
-  <!-- Tablero Kanban con las columnas -->
+  <!-- Tablero Kanban -->
   <div class="kanban-board">
     <div class="column" id="backlog" ondrop="drop(event)" ondragover="allowDrop(event)">
       <h2>Backlog / Por Iniciar</h2>
@@ -61,11 +72,8 @@
     </div>
   </div>
 
-  <!-- SDKs de Firebase (No tocar) -->
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
-  
-  <!-- Archivo de lógica -->
   <script src="script.js"></script>
 </body>
 </html>
