@@ -19,13 +19,12 @@ const refProyectos = db.ref('proyectos');
 let tareasActuales = {}; 
 let proyectosGlobales = []; 
 
-// Escuchar cambios en los proyectos
+// Escuchar cambios
 refProyectos.on('value', (snapshot) => {
   proyectosGlobales = snapshot.val() ? Object.keys(snapshot.val()) : [];
   actualizarListasProyectos();
 });
 
-// Escuchar cambios en las tareas
 refTareas.on('value', (snapshot) => {
   tareasActuales = snapshot.val() || {};
   actualizarListasProyectos();
@@ -45,38 +44,48 @@ function actualizarListasProyectos() {
     if(t.proyecto && t.proyecto !== 'General' && t.proyecto.trim() !== "") proyectosUnicos.add(t.proyecto);
   });
 
-  // Reconstruir selector de CREAR
   selectCrear.innerHTML = '<option value="">-- Seleccionar Proyecto --</option>';
   proyectosUnicos.forEach(proj => { selectCrear.innerHTML += `<option value="${proj}">${proj}</option>`; });
   selectCrear.innerHTML += '<option value="NUEVO">+ Crear Nuevo Proyecto...</option>';
 
-  // Reconstruir selector de FILTRO
   selectFiltro.innerHTML = '<option value="todos">Todos los proyectos</option>';
   proyectosUnicos.forEach(proj => { selectFiltro.innerHTML += `<option value="${proj}">${proj}</option>`; });
 
-  // Reconstruir selector de EDITAR (Ventana emergente)
   if(selectEditar) {
     selectEditar.innerHTML = '<option value="General">General</option>';
     proyectosUnicos.forEach(proj => { selectEditar.innerHTML += `<option value="${proj}">${proj}</option>`; });
   }
 
-  // Mantener selecciones
   if (valorActualCrear !== "NUEVO" && valorActualCrear !== "") selectCrear.value = valorActualCrear;
   selectFiltro.value = valorActualFiltro;
 }
 
-function verificarNuevoProyecto() {
+// Cambia el texto del botón dependiendo de lo que el usuario esté haciendo
+function actualizarBoton() {
   const select = document.getElementById('projectSelect');
   const inputNuevo = document.getElementById('newProjectInput');
+  const btn = document.getElementById('btnPrincipal');
+  const inputTarea = document.getElementById('taskInput').value.trim();
+  
+  // Mostrar u ocultar el campo de texto para nuevo proyecto
   if (select.value === 'NUEVO') {
     inputNuevo.style.display = 'block';
-    inputNuevo.focus();
   } else {
     inputNuevo.style.display = 'none';
     inputNuevo.value = '';
   }
+
+  // Si seleccionó NUEVO y no ha escrito ninguna tarea, el botón dirá Agregar Proyecto
+  if (select.value === 'NUEVO' && inputTarea === '') {
+    btn.innerText = 'Agregar Proyecto';
+    btn.style.backgroundColor = '#28a745'; // Color verde para diferenciar
+  } else {
+    btn.innerText = 'Agregar Tarea';
+    btn.style.backgroundColor = '#0b2240'; // Azul corporativo normal
+  }
 }
 
+// LOGICA MEJORADA DEL BOTÓN
 function agregarAlTablero() {
   const inputTarea = document.getElementById('taskInput');
   const selectProj = document.getElementById('projectSelect');
@@ -86,36 +95,46 @@ function agregarAlTablero() {
   const textoTarea = inputTarea.value.trim();
   let proyecto = selectProj.value;
 
+  // Lógica si están creando un proyecto nuevo
   if (proyecto === 'NUEVO') {
     proyecto = inputNuevoProj.value.trim();
-    if (proyecto !== '') {
-      db.ref(`proyectos/${proyecto}`).set(true); 
+    if (proyecto === '') {
+      alert("Por favor escribe el nombre del nuevo proyecto.");
+      return;
     }
+    // Guardar proyecto en Firebase
+    db.ref(`proyectos/${proyecto}`).set(true); 
   }
 
   if (proyecto === '') proyecto = 'General';
 
+  // Si el campo de Tarea está vacío, evaluamos qué querían hacer
   if (textoTarea === '') {
-    if (proyecto !== 'General') {
-      alert(`¡Proyecto "${proyecto}" creado exitosamente! Ya está disponible en las listas.`);
+    if (selectProj.value === 'NUEVO') {
+      alert(`¡Proyecto "${proyecto}" agregado correctamente!`);
       inputNuevoProj.style.display = 'none';
       inputNuevoProj.value = '';
       selectProj.value = proyecto;
+      actualizarBoton();
     } else {
-      alert("Por favor escribe el nombre de la tarea o crea un proyecto nuevo.");
+      alert("Por favor escribe el nombre de la tarea que vas a crear.");
     }
     return;
   }
 
+  // Si hay texto en la Tarea, creamos la tarea en Firebase
   db.ref('tareas').push({
     titulo: textoTarea,
     proyecto: proyecto,
     prioridad: prioridad,
     columna: 'backlog',
     orden: Date.now() 
+  }).then(() => {
+    inputTarea.value = '';
+    actualizarBoton();
+  }).catch((error) => {
+    alert("Error al guardar: Revisa que tu conexión a Firebase esté bien configurada.");
   });
-
-  inputTarea.value = '';
 }
 
 function renderizarTablero() {
