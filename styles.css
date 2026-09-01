@@ -2,13 +2,14 @@ body {
   font-family: Arial, sans-serif;
   background-color: #f4f5f7;
   margin: 0;
-  padding: 20px;
+  padding: 15px;
 }
 
 h1 {
   text-align: center;
   color: #0b2240;
-  margin-bottom: 25px;
+  margin-top: 5px;
+  margin-bottom: 15px;
 }
 
 .form-container {
@@ -16,13 +17,13 @@ h1 {
   justify-content: center;
   flex-wrap: wrap;
   gap: 10px;
-  margin-bottom: 20px;
+  margin-bottom: 15px;
   align-items: center;
 }
 
 input, select, button {
-  padding: 10px;
-  font-size: 14px;
+  padding: 8px 10px;
+  font-size: 13px;
   border: 1px solid #ccc;
   border-radius: 4px;
 }
@@ -33,43 +34,61 @@ button {
   border: none;
   cursor: pointer;
   font-weight: bold;
+  transition: background-color 0.2s;
 }
 
 button:hover {
   background-color: #f29e16; 
 }
 
+/* Scrollbar superior (Sincronizado) */
+#topScrollWrapper {
+  overflow-x: auto;
+  overflow-y: hidden;
+  margin-bottom: 5px;
+  border-radius: 4px;
+}
+#topScrollContent {
+  height: 1px; /* Invisible pero da el ancho necesario */
+}
+
+/* Tablero */
 .kanban-board {
   display: flex;
-  gap: 15px;
+  gap: 12px;
   overflow-x: auto;
-  padding-bottom: 20px;
+  padding-bottom: 15px;
 }
 
 .column {
   background-color: #ebecf0;
   border-radius: 6px;
-  width: 250px;
-  min-width: 250px;
+  width: 260px;
+  min-width: 260px;
   padding: 10px;
-  min-height: 500px;
+  display: flex;
+  flex-direction: column;
 }
 
 .column h2 {
-  font-size: 15px;
+  font-size: 14px;
   color: #172b4d;
   border-bottom: 2px solid #ccc;
   padding-bottom: 8px;
+  margin-top: 0;
+  margin-bottom: 10px;
   text-transform: uppercase;
+  text-align: center;
 }
 
 .cards-container {
-  min-height: 450px;
+  min-height: 150px;
+  flex-grow: 1; /* Hace que el área para soltar tareas llene la columna */
 }
 
 .card {
   background: white;
-  padding: 12px;
+  padding: 10px;
   margin-bottom: 10px;
   border-radius: 4px;
   box-shadow: 0 1px 3px rgba(0,0,0,0.2);
@@ -88,10 +107,10 @@ button:hover {
   align-self: flex-start;
   padding: 3px 8px;
   border-radius: 12px;
-  font-size: 11px;
+  font-size: 10px;
   color: white;
   font-weight: bold;
-  margin-bottom: 8px;
+  margin-bottom: 6px;
   max-width: 100%;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -100,26 +119,27 @@ button:hover {
 
 .order-badge {
   font-size: 10px;
-  color: #888;
-  margin-bottom: 5px;
+  color: #666;
+  margin-bottom: 4px;
+  font-weight: bold;
 }
 
 .card-content {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  gap: 10px;
+  gap: 8px;
 }
 
 .card-title {
   flex-grow: 1;
   word-break: break-word;
-  font-size: 14px;
+  font-size: 13px;
 }
 
 .card-actions {
   display: flex;
-  gap: 5px;
+  gap: 2px;
 }
 
 .card-actions button {
@@ -135,7 +155,7 @@ button:hover {
   background-color: #e0e0e0;
 }
 
-/* DISEÑO DE LA VENTANA EMERGENTE (MODAL) */
+/* Modal */
 .modal {
   display: none;
   position: fixed;
@@ -149,7 +169,7 @@ button:hover {
 
 .modal-content {
   background-color: #fefefe;
-  margin: 10% auto;
+  margin: 5% auto;
   padding: 20px;
   border: 1px solid #888;
   width: 350px;
@@ -165,23 +185,7 @@ button:hover {
   cursor: pointer;
 }
 
-.close:hover {
-  color: black;
-}
-
-.modal-field {
-  margin-bottom: 15px;
-}
-
-.modal-field label {
-  display: block;
-  font-weight: bold;
-  margin-bottom: 5px;
-  font-size: 13px;
-}
-
-.btn-guardar {
-  width: 100%;
-  padding: 12px;
-  margin-top: 10px;
-}
+.close:hover { color: black; }
+.modal-field { margin-bottom: 15px; }
+.modal-field label { display: block; font-weight: bold; margin-bottom: 5px; font-size: 12px; }
+.btn-guardar { width: 100%; padding: 12px; margin-top: 10px; }
