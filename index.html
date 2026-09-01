@@ -3,17 +3,28 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Tablero Kanban Interactivo</title>
+  <title>Tablero PMO - Vardí</title>
+  
+  <!-- Ícono de la pestaña del navegador (Favicon) -->
+  <link rel="icon" type="image/jpeg" href="Gemini_Generated_Image_iqgt0riqgt0riqgt.jpg">
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
 
-  <h1>Tablero de Proyectos</h1>
+  <!-- Encabezado con Logo -->
+  <div class="header-logo">
+    <img src="Gemini_Generated_Image_iqgt0riqgt0riqgt.jpg" alt="Vardí PMO Posventa">
+  </div>
 
-  <!-- Controles para crear tareas y proyectos -->
+  <!-- Controles para crear tareas y seleccionar proyectos -->
   <div class="form-container">
-    <input type="text" id="projectInput" placeholder="Proyecto (ej. Fidelis)" list="listaProyectos">
-    <datalist id="listaProyectos"></datalist> <!-- Autocompletará proyectos existentes -->
+    
+    <select id="projectSelect" onchange="verificarNuevoProyecto()">
+      <option value="">-- Seleccionar Proyecto --</option>
+      <option value="NUEVO">+ Crear Nuevo Proyecto</option>
+    </select>
+    
+    <input type="text" id="newProjectInput" placeholder="Nombre del nuevo proyecto..." style="display:none;">
     
     <input type="text" id="taskInput" placeholder="Nombre de la tarea...">
     
@@ -72,6 +83,45 @@
     </div>
   </div>
 
+  <!-- Ventana Emergente (Modal) para Editar Tareas -->
+  <div id="editModal" class="modal">
+    <div class="modal-content">
+      <span class="close" onclick="cerrarModal()">&times;</span>
+      <h3>Editar Tarea</h3>
+      
+      <input type="hidden" id="editTaskId">
+      
+      <div class="modal-field">
+        <label>Título de la Tarea:</label>
+        <input type="text" id="editTaskTitle" style="width: 90%;">
+      </div>
+      
+      <div class="modal-field">
+        <label>Proyecto:</label>
+        <input type="text" id="editTaskProject" style="width: 90%;">
+      </div>
+
+      <div class="modal-field">
+        <label>Estado / Prioridad:</label>
+        <select id="editTaskPriority" style="width: 95%;">
+          <option value="alta">🔴 Alta</option>
+          <option value="media">🟡 Media</option>
+          <option value="baja">🟢 Baja</option>
+          <option value="detenido">⚪ Detenido</option>
+        </select>
+      </div>
+
+      <div class="modal-field">
+        <label>Posición (Número de Orden):</label>
+        <p style="font-size: 11px; color: #666; margin: 0 0 5px 0;">(Usa 1 para ponerla de primeras, 2 de segundas, etc.)</p>
+        <input type="number" id="editTaskOrder" style="width: 90%;">
+      </div>
+
+      <button class="btn-guardar" onclick="guardarEdicion()">Guardar Cambios</button>
+    </div>
+  </div>
+
+  <!-- SDKs de Firebase -->
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
   <script src="script.js"></script>
