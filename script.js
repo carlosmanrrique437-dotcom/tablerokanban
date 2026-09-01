@@ -17,54 +17,68 @@ const refTareas = db.ref('tareas');
 
 let tareasActuales = {}; 
 
-// Escuchar base de datos
+// Escuchar base de datos en tiempo real
 refTareas.on('value', (snapshot) => {
   tareasActuales = snapshot.val() || {};
   actualizarListasProyectos();
   renderizarTablero();
 });
 
-// Autocompletar proyectos y llenar el filtro
+// Autocompletar proyectos en el Select de crear tarea y en el Filtro
 function actualizarListasProyectos() {
-  const select = document.getElementById('filterProject');
-  const datalist = document.getElementById('listaProyectos');
-  const valorActual = select.value;
+  const selectCrear = document.getElementById('projectSelect');
+  const selectFiltro = document.getElementById('filterProject');
+  
+  const valorActualCrear = selectCrear.value;
+  const valorActualFiltro = selectFiltro.value;
 
   const proyectos = new Set();
   Object.values(tareasActuales).forEach(t => {
-    if(t.proyecto) proyectos.add(t.proyecto);
+    if(t.proyecto && t.proyecto.trim() !== "") proyectos.add(t.proyecto);
   });
 
-  select.innerHTML = '<option value="todos">Todos los proyectos</option>';
-  datalist.innerHTML = '';
-
+  // Reconstruir el selector de crear tarea
+  selectCrear.innerHTML = '<option value="">-- Seleccionar Proyecto --</option>';
   proyectos.forEach(proj => {
-    // Opción para el filtro
-    const optFiltro = document.createElement('option');
-    optFiltro.value = proj;
-    optFiltro.innerText = proj;
-    select.appendChild(optFiltro);
+    selectCrear.innerHTML += `<option value="${proj}">${proj}</option>`;
+  });
+  selectCrear.innerHTML += '<option value="NUEVO">+ Crear Nuevo Proyecto...</option>';
 
-    // Opción para autocompletar al crear
-    const optData = document.createElement('option');
-    optData.value = proj;
-    datalist.appendChild(optData);
+  // Reconstruir el selector de filtros
+  selectFiltro.innerHTML = '<option value="todos">Todos los proyectos</option>';
+  proyectos.forEach(proj => {
+    selectFiltro.innerHTML += `<option value="${proj}">${proj}</option>`;
   });
 
-  if (proyectos.has(valorActual)) select.value = valorActual;
+  // Mantener la selección si aún existe
+  if (valorActualCrear !== "NUEVO" && valorActualCrear !== "") selectCrear.value = valorActualCrear;
+  selectFiltro.value = valorActualFiltro;
 }
 
+// Mostrar input de texto si eligen "Nuevo Proyecto"
+function verificarNuevoProyecto() {
+  const select = document.getElementById('projectSelect');
+  const inputNuevo = document.getElementById('newProjectInput');
+  if (select.value === 'NUEVO') {
+    inputNuevo.style.display = 'block';
+  } else {
+    inputNuevo.style.display = 'none';
+    inputNuevo.value = '';
+  }
+}
+
+// Dibujar el tablero
 function renderizarTablero() {
   document.querySelectorAll('.cards-container').forEach(c => c.innerHTML = '');
   
   const filtroPrioridad = document.getElementById('filterPriority').value;
   const filtroProyecto = document.getElementById('filterProject').value;
 
-  // Convertimos a array y ordenamos por el número de orden
+  // Ordenar tareas usando la propiedad "orden" numérica que pidió el usuario
   const arrayTareas = Object.keys(tareasActuales).map(id => ({
     id,
     ...tareasActuales[id]
-  })).sort((a, b) => (a.orden || 0) - (b.orden || 0));
+  })).sort((a, b) => (a.orden || 999999) - (b.orden || 999999));
 
   arrayTareas.forEach(tarea => {
     const pasaPrioridad = filtroPrioridad === 'todas' || tarea.prioridad === filtroPrioridad;
@@ -80,7 +94,7 @@ function aplicarFiltro() {
   renderizarTablero();
 }
 
-// Generador de colores únicos para cada proyecto
+// Generador de colores para proyectos
 function generarColorProyecto(nombre) {
   if(!nombre) return '#6c757d'; 
   let hash = 0;
@@ -88,9 +102,10 @@ function generarColorProyecto(nombre) {
     hash = nombre.charCodeAt(i) + ((hash << 5) - hash);
   }
   const hue = Math.abs(hash) % 360;
-  return `hsl(${hue}, 65%, 40%)`; // Color oscuro para que la letra blanca se lea bien
+  return `hsl(${hue}, 70%, 35%)`; 
 }
 
+// Crear la tarjeta HTML
 function renderizarTarjeta(id, tarea) {
   const columna = document.getElementById(tarea.columna);
   if (!columna) return;
@@ -101,20 +116,22 @@ function renderizarTarjeta(id, tarea) {
   card.draggable = true;
   card.id = id;
 
-  // Eventos de arrastrar
+  // Solo arrastramos para cambiar de columna
   card.ondragstart = (e) => {
-    card.classList.add('dragging');
     e.dataTransfer.setData('text/plain', id);
   };
-  card.ondragend = () => card.classList.remove('dragging');
 
   // Etiqueta del proyecto
   const badge = document.createElement('div');
   badge.className = 'project-badge';
   badge.innerText = tarea.proyecto || 'General';
-  badge.style.backgroundColor = generarColorProyecto(tarea.proyecto || 'General');
+  badge.style.backgroundColor = generarColorProyecto(tarea.proyecto);
 
-  // Contenido de la tarjeta (Titulo y Botones)
+  // Etiqueta de la posición (Número)
+  const ordenTexto = document.createElement('div');
+  ordenTexto.className = 'order-badge';
+  ordenTexto.innerText = `Posición: ${tarea.orden || '-'}`;
+
   const content = document.createElement('div');
   content.className = 'card-content';
 
@@ -127,7 +144,7 @@ function renderizarTarjeta(id, tarea) {
 
   const btnEditar = document.createElement('button');
   btnEditar.innerText = '✏️';
-  btnEditar.onclick = () => editarTarea(id, tarea.titulo);
+  btnEditar.onclick = () => abrirModalEdicion(id); // Abre la ventana emergente
 
   const btnEliminar = document.createElement('button');
   btnEliminar.innerText = '🗑️';
@@ -139,86 +156,94 @@ function renderizarTarjeta(id, tarea) {
   content.appendChild(acciones);
 
   card.appendChild(badge);
+  card.appendChild(ordenTexto);
   card.appendChild(content);
   container.appendChild(card);
 }
 
-// ---- LOGICA PARA ARRASTRAR Y ORDENAR EN EL MEDIO ----
-function allowDrop(ev) {
-  ev.preventDefault();
-  const columna = ev.currentTarget.closest('.column');
-  const container = columna.querySelector('.cards-container');
-  const draggingCard = document.querySelector('.dragging');
-  if (!draggingCard) return;
+// ---- LÓGICA DE VENTANA EMERGENTE (MODAL) PARA EDITAR ----
+function abrirModalEdicion(id) {
+  const tarea = tareasActuales[id];
+  if (!tarea) return;
 
-  const afterElement = obtenerElementoSiguiente(container, ev.clientY);
-  if (afterElement == null) {
-    container.appendChild(draggingCard);
-  } else {
-    container.insertBefore(draggingCard, afterElement);
-  }
+  // Llenar el formulario con los datos actuales
+  document.getElementById('editTaskId').value = id;
+  document.getElementById('editTaskTitle').value = tarea.titulo;
+  document.getElementById('editTaskProject').value = tarea.proyecto || '';
+  document.getElementById('editTaskPriority').value = tarea.prioridad;
+  document.getElementById('editTaskOrder').value = tarea.orden || '';
+
+  // Mostrar la ventana
+  document.getElementById('editModal').style.display = 'block';
 }
 
-// Calcula en qué posición del mouse estás soltando la tarjeta
-function obtenerElementoSiguiente(container, y) {
-  const elementos = [...container.querySelectorAll('.card:not(.dragging)')];
-  return elementos.reduce((closest, child) => {
-    const box = child.getBoundingClientRect();
-    const offset = y - box.top - box.height / 2;
-    if (offset < 0 && offset > closest.offset) {
-      return { offset: offset, element: child };
-    } else {
-      return closest;
-    }
-  }, { offset: Number.NEGATIVE_INFINITY }).element;
+function cerrarModal() {
+  document.getElementById('editModal').style.display = 'none';
+}
+
+function guardarEdicion() {
+  const id = document.getElementById('editTaskId').value;
+  const nuevoTitulo = document.getElementById('editTaskTitle').value.trim();
+  const nuevoProyecto = document.getElementById('editTaskProject').value.trim();
+  const nuevaPrioridad = document.getElementById('editTaskPriority').value;
+  const nuevoOrden = parseInt(document.getElementById('editTaskOrder').value);
+
+  if (nuevoTitulo === '') {
+    alert("El título no puede estar vacío");
+    return;
+  }
+
+  // Actualizar en Firebase
+  db.ref(`tareas/${id}`).update({ 
+    titulo: nuevoTitulo,
+    proyecto: nuevoProyecto,
+    prioridad: nuevaPrioridad,
+    orden: isNaN(nuevoOrden) ? 999999 : nuevoOrden // Si no ponen número, se va al final
+  });
+
+  cerrarModal();
+}
+
+// ---- LOGICA PARA MOVER ENTRE COLUMNAS ----
+function allowDrop(ev) {
+  ev.preventDefault();
 }
 
 function drop(ev) {
   ev.preventDefault();
   const idTarea = ev.dataTransfer.getData('text/plain');
   const columnaDestino = ev.currentTarget.closest('.column').id;
-  const container = document.getElementById(columnaDestino).querySelector('.cards-container');
   
-  // Guardamos el nuevo orden de TODAS las tarjetas de esta columna en Firebase
-  const cards = [...container.querySelectorAll('.card')];
-  let actualizaciones = {};
-  
-  cards.forEach((card, index) => {
-    actualizaciones[`tareas/${card.id}/columna`] = columnaDestino;
-    actualizaciones[`tareas/${card.id}/orden`] = index;
-  });
-
-  db.ref().update(actualizaciones);
+  // Solo cambiamos la columna. El orden numérico se mantiene.
+  db.ref(`tareas/${idTarea}/columna`).set(columnaDestino);
 }
 
-// ---- LOGICA DE TAREAS ----
-function eliminarTarea(id) {
-  if (confirm('¿Eliminar esta tarea del tablero?')) db.ref(`tareas/${id}`).remove();
-}
-
-function editarTarea(id, tituloActual) {
-  const nuevoTitulo = prompt('Nuevo nombre:', tituloActual);
-  if (nuevoTitulo && nuevoTitulo.trim() !== '') db.ref(`tareas/${id}`).update({ titulo: nuevoTitulo.trim() });
-}
-
+// ---- CREAR NUEVA TAREA ----
 function agregarTarea() {
   const input = document.getElementById('taskInput');
-  const projectInput = document.getElementById('projectInput');
+  const selectProj = document.getElementById('projectSelect');
+  const inputNuevoProj = document.getElementById('newProjectInput');
   const prioridad = document.getElementById('prioritySelect').value;
   
   const texto = input.value.trim();
-  const proyecto = projectInput.value.trim() || 'General';
+  
+  // Determinar si usamos el proyecto del select o el que escribieron a mano
+  let proyecto = selectProj.value;
+  if (proyecto === 'NUEVO') {
+    proyecto = inputNuevoProj.value.trim();
+  }
+  if (proyecto === '') proyecto = 'General';
 
   if (texto === '') return;
 
+  // Asignamos fecha actual como orden base para que queden de últimas al crearse
   db.ref('tareas').push({
     titulo: texto,
     proyecto: proyecto,
     prioridad: prioridad,
     columna: 'backlog',
-    orden: Date.now() // Va al final por defecto
+    orden: Date.now() 
   });
 
   input.value = '';
-  // No limpiamos el proyecto para que sea fácil seguir agregando tareas a ese mismo proyecto
 }
