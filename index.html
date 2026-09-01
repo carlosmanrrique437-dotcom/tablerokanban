@@ -5,8 +5,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Tablero PMO - Vardí</title>
   
-  <!-- Ícono EXCLUSIVO para la pestaña del navegador (Favicon) -->
-  <link rel="icon" type="image/jpeg" href="Gemini_Generated_Image_iqgt0riqgt0riqgt.jpg">
+  <!-- Ícono EXCLUSIVO para la pestaña del navegador (Truco ?v=2 para forzar recarga) -->
+  <link rel="icon" type="image/jpeg" href="Gemini_Generated_Image_iqgt0riqgt0riqgt.jpg?v=2">
   
   <link rel="stylesheet" href="styles.css">
 </head>
@@ -17,14 +17,14 @@
   <!-- Controles para crear tareas y seleccionar proyectos -->
   <div class="form-container">
     
-    <select id="projectSelect" onchange="verificarNuevoProyecto()">
+    <select id="projectSelect" onchange="actualizarBoton()">
       <option value="">-- Seleccionar Proyecto --</option>
       <option value="NUEVO">+ Crear Nuevo Proyecto...</option>
     </select>
     
-    <input type="text" id="newProjectInput" placeholder="Escribe el nuevo proyecto..." style="display:none;">
+    <input type="text" id="newProjectInput" placeholder="Escribe el nuevo proyecto..." style="display:none;" oninput="actualizarBoton()">
     
-    <input type="text" id="taskInput" placeholder="Nombre de la tarea (Opcional si solo creas proyecto)...">
+    <input type="text" id="taskInput" placeholder="Nombre de la tarea..." oninput="actualizarBoton()">
     
     <select id="prioritySelect">
       <option value="alta">Alta</option>
@@ -33,7 +33,7 @@
       <option value="detenido">⚪ Detenido</option>
     </select>
     
-    <button onclick="agregarAlTablero()">Guardar</button>
+    <button id="btnPrincipal" onclick="agregarAlTablero()">Agregar Tarea</button>
   </div>
 
   <!-- Controles para FILTRAR la vista -->
@@ -111,7 +111,7 @@
 
       <div class="modal-field">
         <label>Posición (Número de Orden):</label>
-        <p style="font-size: 11px; color: #666; margin: 0 0 5px 0;">(Usa 1 para ponerla de primeras, 2 de segundas, etc. en la columna)</p>
+        <p style="font-size: 11px; color: #666; margin: 0 0 5px 0;">(Usa 1 para ponerla de primeras, 2 de segundas, etc.)</p>
         <input type="number" id="editTaskOrder" style="width: 90%;">
       </div>
 
