@@ -3,17 +3,17 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Tablero PMO - Vardí</title>
+  <title>Tablero de proyectos</title>
   
   <link rel="icon" type="image/jpeg" href="Gemini_Generated_Image_iqgt0riqgt0riqgt.jpg?v=3">
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
 
-  <h1>Tablero PMO - Vardínet</h1>
+  <h1>Tablero Proyectos</h1>
 
-  <!-- Controles para crear tareas y seleccionar proyectos -->
-  <div class="form-container" style="background-color: #fff; padding: 15px; border-radius: 8px; box-shadow: 0 1px 4px rgba(0,0,0,0.1);">
+  <!-- Controles para crear tareas (Fondo Azul Corporativo) -->
+  <div class="form-container top-bar">
     
     <select id="projectSelect" onchange="actualizarBoton()">
       <option value="">-- Seleccionar Proyecto --</option>
@@ -41,8 +41,7 @@
       <option value="todos">Todos los proyectos</option>
     </select>
 
-    <!-- Botón para eliminar el proyecto que esté filtrado -->
-    <button id="btnEliminarProyecto" onclick="eliminarProyectoSeleccionado()" style="display: none; background-color: #dc3545; padding: 8px 12px; margin-left: 5px;">🗑️ Eliminar Proyecto</button>
+    <button id="btnEliminarProyecto" onclick="eliminarProyectoSeleccionado()" style="display: none; background-color: #dc3545; color: white; padding: 8px 12px; margin-left: 5px;">🗑️ Eliminar Proyecto</button>
 
     <label for="filterPriority" style="font-weight: bold; margin-top: 8px; margin-left: 15px;">Prioridad:</label>
     <select id="filterPriority" onchange="aplicarFiltro()">
@@ -91,7 +90,7 @@
   <div id="editModal" class="modal">
     <div class="modal-content">
       <span class="close" onclick="cerrarModal()">&times;</span>
-      <h3>Editar Tarea</h3>
+      <h3 style="color: #22407A;">Editar Tarea</h3>
       <input type="hidden" id="editTaskId">
       
       <div class="modal-field">
@@ -112,6 +111,12 @@
           <option value="baja">🟢 Baja</option>
           <option value="detenido">⚪ Detenido</option>
         </select>
+      </div>
+
+      <!-- NUEVO CAMPO: RESPONSABLE -->
+      <div class="modal-field">
+        <label>Responsable:</label>
+        <input type="text" id="editTaskResponsable" style="width: 90%;" placeholder="Ej. CARLOS IVAN">
       </div>
 
       <div class="modal-field">
