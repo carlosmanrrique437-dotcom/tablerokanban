@@ -15,12 +15,12 @@ firebase.initializeApp(firebaseConfig);
 const db = firebase.database();
 const refTareas = db.ref('tareas');
 const refProyectos = db.ref('proyectos'); 
-const refFases = db.ref('fases'); // Nueva base de datos para Fases
+const refFases = db.ref('fases');
 
 let tareasActuales = {}; 
 let proyectosGlobales = []; 
 let fasesGlobales = {}; 
-let fasesPorProyecto = {}; // Diccionario para buscar fácil
+let fasesPorProyecto = {}; 
 
 refProyectos.on('value', (snap) => {
   proyectosGlobales = snap.val() ? Object.keys(snap.val()) : [];
@@ -64,7 +64,6 @@ function actualizarListasProyectos() {
     if(t.proyecto && t.proyecto !== 'General' && t.proyecto.trim() !== "") proyectosUnicos.add(t.proyecto);
   });
 
-  // Consolidar Fases
   fasesPorProyecto = {};
   proyectosUnicos.forEach(p => fasesPorProyecto[p] = new Set());
   fasesPorProyecto['General'] = new Set();
@@ -81,7 +80,6 @@ function actualizarListasProyectos() {
       }
   });
 
-  // Reconstruir Selects de Proyectos
   selectCrear.innerHTML = '<option value="">-- Proyecto (General) --</option>';
   proyectosUnicos.forEach(proj => { selectCrear.innerHTML += `<option value="${proj}">${proj}</option>`; });
   selectCrear.innerHTML += '<option value="NUEVO">+ Crear Nuevo Proyecto...</option>';
@@ -101,7 +99,6 @@ function actualizarListasProyectos() {
   actualizarFiltroFases();
 }
 
-// Actualizar Fases según el proyecto seleccionado (Crear o Editar)
 function actualizarFases(modo) {
   const selectProj = document.getElementById(modo === 'crear' ? 'projectSelect' : 'editTaskProject');
   const selectFase = document.getElementById(modo === 'crear' ? 'phaseSelect' : 'editTaskPhase');
@@ -127,7 +124,6 @@ function actualizarFases(modo) {
   if(modo === 'crear') actualizarBoton();
 }
 
-// Filtro secundario: Mostrar las fases que pertenecen al proyecto seleccionado en el filtro
 function actualizarFiltroFases() {
   const proy = document.getElementById('filterProject').value;
   const selectFilterFase = document.getElementById('filterPhase');
@@ -180,7 +176,6 @@ function agregarAlTablero() {
   
   const textoTarea = inputTarea.value.trim();
   
-  // Procesar Proyecto
   let proyecto = selectProj.value;
   if (proyecto === 'NUEVO') {
     proyecto = inputNuevoProj.value.trim();
@@ -188,7 +183,6 @@ function agregarAlTablero() {
   }
   if (proyecto === '') proyecto = 'General';
 
-  // Procesar Fase
   let fase = selectFase.value;
   if (fase === 'NUEVA') {
     fase = inputNuevaFase.value.trim();
@@ -196,7 +190,6 @@ function agregarAlTablero() {
   }
   if (fase === 'NUEVA') fase = '';
 
-  // Solo guardamos un proyecto o fase vacía
   if (textoTarea === '') {
     if (selectProj.value === 'NUEVO' && proyecto !== 'General' && proyecto !== '') {
       alert(`¡Proyecto "${proyecto}" agregado!`);
@@ -274,11 +267,13 @@ function eliminarProyectoSeleccionado() {
   }
 }
 
+// ESTA ES LA FUNCIÓN QUE GENERA LOS COLORES AUTOMÁTICOS
 function generarColorProyecto(nombre) {
   if(!nombre || nombre === 'General') return '#6c757d'; 
   let hash = 0;
   for (let i = 0; i < nombre.length; i++) hash = nombre.charCodeAt(i) + ((hash << 5) - hash);
-  return `hsl(${Math.abs(hash) % 360}, 70%, 35%)`; 
+  // Ajuste leve de brillo (40%) para colores vivos pero que permitan leer la letra blanca
+  return `hsl(${Math.abs(hash) % 360}, 75%, 40%)`; 
 }
 
 function renderizarTarjeta(id, tarea) {
@@ -295,10 +290,10 @@ function renderizarTarjeta(id, tarea) {
   const badge = document.createElement('div');
   badge.className = 'project-badge';
   
-  // Si tiene fase, la mostramos junto al proyecto
   let textoBadge = tarea.proyecto || 'General';
   if(tarea.fase && tarea.fase.trim() !== '') textoBadge += ` | ${tarea.fase}`;
   badge.innerText = textoBadge;
+  // Llama a la función automática de colores
   badge.style.backgroundColor = generarColorProyecto(tarea.proyecto);
 
   const ordenTexto = document.createElement('div');
@@ -364,7 +359,7 @@ function abrirModalEdicion(id) {
     selectProyectoModal.value = tarea.proyecto || 'General';
   }
   
-  actualizarFases('editar'); // Carga las fases correspondientes a ese proyecto
+  actualizarFases('editar'); 
   const selectFaseModal = document.getElementById('editTaskPhase');
   if(selectFaseModal.querySelector(`option[value="${tarea.fase}"]`)) {
     selectFaseModal.value = tarea.fase || '';
