@@ -3,27 +3,33 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Tablero de proyectos</title>
+  <title>Tablero PMO - Vardínet</title>
   
   <link rel="icon" type="image/jpeg" href="Gemini_Generated_Image_iqgt0riqgt0riqgt.jpg?v=3">
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
 
-  <h1>Tablero Proyectos</h1>
+  <h1>Tablero PMO - Vardínet</h1>
 
-  <!-- Controles para crear tareas (Fondo Azul Corporativo) -->
+  <!-- Controles para crear tareas, proyectos y fases (Fondo Azul Corporativo) -->
   <div class="form-container top-bar">
     
-    <select id="projectSelect" onchange="actualizarBoton()">
-      <option value="">-- Seleccionar Proyecto --</option>
+    <!-- Bloque Proyecto -->
+    <select id="projectSelect" onchange="actualizarFases('crear')">
+      <option value="">-- Proyecto (General) --</option>
       <option value="NUEVO">+ Crear Nuevo Proyecto...</option>
     </select>
+    <input type="text" id="newProjectInput" placeholder="Nombre del proyecto..." style="display:none;" oninput="actualizarFases('crear')">
     
-    <input type="text" id="newProjectInput" placeholder="Escribe el nuevo proyecto..." style="display:none;" oninput="actualizarBoton()">
+    <!-- Bloque Fase -->
+    <select id="phaseSelect" onchange="actualizarBoton()">
+      <option value="">-- Sin Fase --</option>
+    </select>
+    <input type="text" id="newPhaseInput" placeholder="Nombre de la fase..." style="display:none;" oninput="actualizarBoton()">
     
+    <!-- Bloque Tarea -->
     <input type="text" id="taskInput" placeholder="Nombre de la tarea..." oninput="actualizarBoton()">
-    
     <select id="prioritySelect">
       <option value="alta">Alta</option>
       <option value="media">Media</option>
@@ -36,14 +42,19 @@
 
   <!-- Controles para FILTRAR la vista -->
   <div class="form-container" style="border-bottom: 2px solid #ddd; padding-bottom: 15px;">
-    <label for="filterProject" style="font-weight: bold; margin-top: 8px;">Filtrar Proyecto:</label>
-    <select id="filterProject" onchange="aplicarFiltro()">
-      <option value="todos">Todos los proyectos</option>
+    
+    <label for="filterProject" style="font-weight: bold; margin-top: 8px;">Proyecto:</label>
+    <select id="filterProject" onchange="actualizarFiltroFases()">
+      <option value="todos">Todos</option>
+    </select>
+    <button id="btnEliminarProyecto" onclick="eliminarProyectoSeleccionado()" style="display: none; background-color: #dc3545; color: white; padding: 6px 10px; margin-left: 2px;">🗑️</button>
+
+    <label for="filterPhase" style="font-weight: bold; margin-top: 8px; margin-left: 10px;">Fase:</label>
+    <select id="filterPhase" onchange="aplicarFiltro()">
+      <option value="todas">Todas</option>
     </select>
 
-    <button id="btnEliminarProyecto" onclick="eliminarProyectoSeleccionado()" style="display: none; background-color: #dc3545; color: white; padding: 8px 12px; margin-left: 5px;">🗑️ Eliminar Proyecto</button>
-
-    <label for="filterPriority" style="font-weight: bold; margin-top: 8px; margin-left: 15px;">Prioridad:</label>
+    <label for="filterPriority" style="font-weight: bold; margin-top: 8px; margin-left: 10px;">Prioridad:</label>
     <select id="filterPriority" onchange="aplicarFiltro()">
       <option value="todas">Todas</option>
       <option value="alta">🔴 Alta</option>
@@ -100,7 +111,13 @@
       
       <div class="modal-field">
         <label>Proyecto:</label>
-        <select id="editTaskProject" style="width: 95%;"></select>
+        <select id="editTaskProject" style="width: 95%;" onchange="actualizarFases('editar')"></select>
+      </div>
+
+      <div class="modal-field">
+        <label>Fase:</label>
+        <select id="editTaskPhase" style="width: 95%;" onchange="verificarNuevaFaseEdicion()"></select>
+        <input type="text" id="newEditPhaseInput" placeholder="Nueva fase..." style="display:none; width: 90%; margin-top: 5px;">
       </div>
 
       <div class="modal-field">
@@ -113,7 +130,6 @@
         </select>
       </div>
 
-      <!-- NUEVO CAMPO: RESPONSABLE -->
       <div class="modal-field">
         <label>Responsable:</label>
         <input type="text" id="editTaskResponsable" style="width: 90%;" placeholder="Ej. CARLOS IVAN">
@@ -121,7 +137,6 @@
 
       <div class="modal-field">
         <label>Posición (Número de Orden):</label>
-        <p style="font-size: 11px; color: #666; margin: 0 0 5px 0;">(Usa 1 para ponerla de primeras, 2 de segundas, etc.)</p>
         <input type="number" id="editTaskOrder" style="width: 90%;">
       </div>
 
@@ -129,7 +144,6 @@
     </div>
   </div>
 
-  <!-- SDKs de Firebase -->
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
   <script src="script.js"></script>
