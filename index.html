@@ -3,24 +3,28 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Tablero de Proyectos</title>
+  <title>Tablero PMO - Vardínet</title>
   
   <link rel="icon" type="image/jpeg" href="Gemini_Generated_Image_iqgt0riqgt0riqgt.jpg?v=3">
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
 
-  <h1>Tablero de Proyectos</h1>
+  <h1>Tablero PMO - Vardínet</h1>
 
   <!-- Controles para crear tareas, proyectos y fases (Fondo Azul Corporativo) -->
   <div class="form-container top-bar">
     
     <!-- Bloque Proyecto -->
-    <select id="projectSelect" onchange="actualizarFases('crear')">
+    <select id="projectSelect" onchange="actualizarBoton()">
       <option value="">-- Proyecto (General) --</option>
       <option value="NUEVO">+ Crear Nuevo Proyecto...</option>
     </select>
-    <input type="text" id="newProjectInput" placeholder="Nombre del proyecto..." style="display:none;" oninput="actualizarFases('crear')">
+    
+    <!-- NUEVO: Paleta de color para el proyecto -->
+    <input type="color" id="projectColorInput" title="Elegir Color del Proyecto" value="#22407A" onchange="actualizarColorProyecto()">
+    
+    <input type="text" id="newProjectInput" placeholder="Nombre del proyecto..." style="display:none;" oninput="actualizarBoton()">
     
     <!-- Bloque Fase -->
     <select id="phaseSelect" onchange="actualizarBoton()">
